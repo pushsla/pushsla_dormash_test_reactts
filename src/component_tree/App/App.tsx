@@ -1,5 +1,4 @@
 import React from 'react';
-import Grid from "@mui/material/Grid";
 
 import './App.sass';
 import {AppHeader} from "./Header/App__header";

@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Paper, Button} from "@mui/material";
+import {Paper, Button, Card, Divider, Stack} from "@mui/material";
 import {
     Grid,
     Table,
@@ -7,7 +7,7 @@ import {
     PagingPanel,
     TableGroupRow,
     GroupingPanel,
-    DragDropProvider, Toolbar
+    DragDropProvider, Toolbar, TableSelection
 } from "@devexpress/dx-react-grid-material-ui";
 import {
     GroupingState,
@@ -22,10 +22,10 @@ import {
     authRowAddAsync,
     authRows,
     DataTableAuthColumns,
-    selectRow,
-    deselectRow
 } from "@data/DataSlice/DataSlice";
 import {localeStruct} from "@data/LocaleSlice/LocaleSlice";
+
+import "./Bodygrid.sass"
 
 
 export const Bodygrid: React.FC<{}> = (props) => {
@@ -37,26 +37,30 @@ export const Bodygrid: React.FC<{}> = (props) => {
     const [groups, setGroups] = useState([]);
 
     return(
-        <Paper>
-            <Grid columns={DataTableAuthColumns} rows={rows}>
-                <DragDropProvider/>
+        <article className="Bodygrid">
+            <Paper>
+                <Stack direction={"column"} spacing={"2rem"}>
+                    <Grid columns={DataTableAuthColumns} rows={rows}>
+                        <DragDropProvider/>
 
-                <PagingState defaultCurrentPage={0} defaultPageSize={rows_per_page[0]}/>
-                <GroupingState defaultGrouping={groups}/>
+                        <PagingState defaultCurrentPage={0} defaultPageSize={rows_per_page[0]}/>
+                        <GroupingState defaultGrouping={groups}/>
 
-                <IntegratedPaging/>
-                <IntegratedGrouping/>
+                        <IntegratedPaging/>
+                        <IntegratedGrouping/>
 
-                <Table messages={locale.Bodygrid.tableMessages}/>
+                        <Table messages={locale.Bodygrid.tableMessages}/>
 
-                <TableHeaderRow showGroupingControls/>
-                <TableGroupRow/>
-                <Toolbar/>
+                        <TableHeaderRow showGroupingControls/>
+                        <TableGroupRow/>
+                        <Toolbar/>
 
-                <PagingPanel pageSizes={rows_per_page} messages={locale.Bodygrid.pagingPanelMessages}/>
-                <GroupingPanel showGroupingControls messages={locale.Bodygrid.groupingPanelMessages}/>
-            </Grid>
-            <Button variant={"contained"}>{locale.Common.addMessage}</Button>
-        </Paper>
+                        <PagingPanel pageSizes={rows_per_page} messages={locale.Bodygrid.pagingPanelMessages}/>
+                        <GroupingPanel showGroupingControls messages={locale.Bodygrid.groupingPanelMessages}/>
+                    </Grid>
+                    <Button className="Bodygrid__addButton" variant={"contained"}>{locale.Common.addMessage}</Button>
+                </Stack>
+            </Paper>
+        </article>
     );
 };
