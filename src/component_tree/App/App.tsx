@@ -1,7 +1,9 @@
 import React from 'react';
-import './App.css';
+import './App.sass';
 import {AppHeader} from "./__header/App__header";
 
 export const App = () => (
-    <AppHeader/>
+    <main className="App">
+        <AppHeader/>
+    </main>
 );

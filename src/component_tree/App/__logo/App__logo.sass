@@ -1,0 +1,13 @@
+.App
+  &__logo
+    height: 40vmin
+    pointer-events: none
+
+    @media(prefers-reduced-motion: no-preference)
+      animation: App__logo_spinanim infinite 20s linear
+
+    @keyframes App__logo_spinanim
+      0%
+        transform: rotate(0deg)
+      100%
+        transform: rotate(360deg)
