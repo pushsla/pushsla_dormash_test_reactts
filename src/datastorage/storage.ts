@@ -1,10 +1,12 @@
 import {Action, configureStore, ThunkAction} from "@reduxjs/toolkit";
 import dataSliceReducer from "@data/DataSlice/DataSlice";
+import localeSliceReducer from "@data/LocaleSlice/LocaleSlice"
 
 
 export const Storage = configureStore({
     reducer:{
         datarows: dataSliceReducer,
+        locale: localeSliceReducer,
     }
 });
 

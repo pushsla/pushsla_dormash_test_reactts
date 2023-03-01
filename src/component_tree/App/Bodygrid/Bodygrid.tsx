@@ -25,22 +25,12 @@ import {
     selectRow,
     deselectRow
 } from "@data/DataSlice/DataSlice";
-
-const tableMessages = {
-  noData: 'Пусто :)',
-};
-const groupingPanelMessages = {
-  groupByColumn: 'Перетащите столбец, чтобы выполнить группировку',
-};
-const pagingPanelMessages = {
-  showAll: 'Все',
-  rowsPerPage: 'Строк на странице',
-  info: () => '',
-};
+import {localeStruct} from "@data/LocaleSlice/LocaleSlice";
 
 
 export const Bodygrid: React.FC<{}> = (props) => {
     const rows = useAppSelector(authRows);
+    const locale = useAppSelector(localeStruct);
     const dispatch = useAppDispatch();
 
     const [rows_per_page] = useState([3, 5, 10, 15]);
@@ -57,16 +47,16 @@ export const Bodygrid: React.FC<{}> = (props) => {
                 <IntegratedPaging/>
                 <IntegratedGrouping/>
 
-                <Table messages={tableMessages}/>
+                <Table messages={locale.Bodygrid.tableMessages}/>
 
                 <TableHeaderRow showGroupingControls/>
                 <TableGroupRow/>
                 <Toolbar/>
 
-                <PagingPanel pageSizes={rows_per_page} messages={pagingPanelMessages}/>
-                <GroupingPanel showGroupingControls messages={groupingPanelMessages}/>
+                <PagingPanel pageSizes={rows_per_page} messages={locale.Bodygrid.pagingPanelMessages}/>
+                <GroupingPanel showGroupingControls messages={locale.Bodygrid.groupingPanelMessages}/>
             </Grid>
-            <Button variant={"contained"}>Добавить запись</Button>
+            <Button variant={"contained"}>{locale.Common.addMessage}</Button>
         </Paper>
     );
 };
