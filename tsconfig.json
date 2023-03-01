@@ -5,7 +5,8 @@
     "paths": {
       "@/*": ["*"],
       "@components/*": ["component_tree/*"],
-      "@blob/*": ["blob/*"]
+      "@blob/*": ["blob/*"],
+      "@data/*": ["datastorage/*"]
     },
     "lib": [
       "dom",
