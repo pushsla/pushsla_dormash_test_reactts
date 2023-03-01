@@ -5,6 +5,6 @@ export interface IPropertiesApp__logo{
     alt: string
 }
 
-export const App__logo = (props: IPropertiesApp__logo) => (
+export const AppLogo = (props: IPropertiesApp__logo) => (
     <img src={props.logo} className="App-logo" alt={props.alt} />
 );

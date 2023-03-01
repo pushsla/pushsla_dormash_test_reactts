@@ -2,11 +2,11 @@ import React from "react";
 
 import logo from "@blob/logo.svg";
 
-import {App__logo} from "../__logo/App__logo";
+import {AppLogo} from "../__logo/App__logo";
 
-export const App__header = () => (
+export const AppHeader = () => (
     <header className="App__header">
-        <App__logo logo={logo} alt="Project logo"/>
+        <AppLogo logo={logo} alt="Project logo"/>
         <p>Application header</p>
     </header>
 );
