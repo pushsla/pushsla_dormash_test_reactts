@@ -10,6 +10,14 @@ export interface LocaleSlicePieces{
     },
     Common: {
         addMessage: string,
+    },
+    Dialogs: {
+        addDialog: {
+            title: string,
+            body: string,
+            apply: string,
+            decline: string,
+        }
     }
 }
 
@@ -29,11 +37,19 @@ const initialState: LocaleSliceState = {
             pagingPanelMessages: {
               showAll: 'Все',
               rowsPerPage: 'Строк на странице',
-              info: () => '',
+              info: (props) => `с ${props.from} по ${props.to} (всего ${props.count})`,
             },
         },
         Common: {
             addMessage: "Добавить"
+        },
+        Dialogs: {
+            addDialog: {
+                title: "Новая запись",
+                body: "Добавить новую запись:",
+                apply: "Ок",
+                decline: "Отмена"
+            }
         }
     }
 }
@@ -45,5 +61,5 @@ const LocaleSlice = createSlice({
     reducers: {}
 })
 
-export const localeStruct = (state: RootState) => state.locale.pieces;
+export const localeSlice = (state: RootState) => state.locale.pieces;
 export default LocaleSlice.reducer;

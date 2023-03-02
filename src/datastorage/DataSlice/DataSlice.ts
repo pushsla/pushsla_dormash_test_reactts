@@ -1,68 +1,74 @@
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {RootState} from "@data/storage";
-import {hashRowPassword, promiseAuthRowAdd} from "@data/DataSlice/DataSlice.impl";
+import {hashRowPassword, asyncAuthRowAdd} from "@data/DataSlice/DataSlice.impl";
 
 
-export interface DataTableAuthRow{
+export interface IDataTableAuthRow {
     email: string,
     password: string,
     gender: 'M' | 'F' | '?',
     hashed?: string,
-    timestamp?: string,
+    timestamp: string,
 }
 
-export interface DataSliceState{
-    rows: Array<DataTableAuthRow>,
-    selected_row_indxs: Array<Number>,
-    status: 'ready' | 'loading' | 'failed'
+export interface IDataSliceState {
+    rows: Array<IDataTableAuthRow>,
+    columns: Array<IDataTableColumn>,
+    metacolumns: Array<IDataTableMetacolumn>
+    status: 'ready' | 'loading' | 'failed',
+    error: string | null,
 }
 
-export const DataTableAuthColumns = [
-    {name: 'email', title: 'E-mail'},
-    {name: 'gender', title: 'I am...'},
-    {name: 'password', title: 'Secret pass!'},
-    {name: 'hashed', title: 'Stored pass'},
-    {name: 'timestamp', title: 'Created at (Unix)'},
-];
+export interface IDataTableMetacolumn{
+    column_name: string,
+    input_type: "text" | "email" | "password" | "select" | "date"
+    required?: boolean,
+    allowed?: Array<string>,
+    auto_assigned?: boolean,
+}
+
+export interface IDataTableColumn{
+    name: string,
+    title: string
+}
 
 export const authRowAddAsync = createAsyncThunk(
     'DataSlice/authRowAdd',
-    async (row: DataTableAuthRow) => {
-        const response = await promiseAuthRowAdd(row);
+    async (row: IDataTableAuthRow) => {
+        const response = await asyncAuthRowAdd(row);
         return response.data;
     }
 )
 
-const initialState: DataSliceState = {
-    rows: [
-        {email:'fake@mymail.xyz', gender: 'M', password: 'mamba12', hashed:hashRowPassword('mamba12'), timestamp:Date.now().toString()},
-        {email:'fox@furry.yiff', gender: 'F', password: 'sandbox', hashed:hashRowPassword('sandbox'), timestamp:Date.now().toString()},
-        {email:'foxy1@furry.yiff', gender: '?', password: 'sandbox1', hashed:hashRowPassword('sandbox1'), timestamp:Date.now().toString()},
-        {email:'foxy2@furry.yiff', gender: '?', password: 'sandbox2', hashed:hashRowPassword('sandbox2'), timestamp:Date.now().toString()},
-        {email:'foxy3@furry.yiff', gender: 'F', password: 'sandbox3', hashed:hashRowPassword('sandbox3'), timestamp:Date.now().toString()},
-        {email:'foxy4@furry.yiff', gender: 'M', password: 'sandbox4', hashed:hashRowPassword('sandbox4'), timestamp:Date.now().toString()},
+const initialState: IDataSliceState = {
+    rows: [],
+    columns: [
+        {name: 'email', title: 'E-mail'},
+        {name: 'gender', title: 'I am...'},
+        {name: 'password', title: 'Secret pass!'},
+        {name: 'hashed', title: 'Stored pass'},
+        {name: 'timestamp', title: 'Created at (Unix)'},
     ],
-    selected_row_indxs: [],
-    status: 'ready'
+    metacolumns: [
+        {column_name: 'email', required: true, input_type: 'email'},
+        {column_name: 'gender', required: true, input_type: 'select' ,allowed: ["M", "F", "?"]},
+        {column_name: 'password', required: true, input_type: 'password'},
+        {column_name: 'hashed', auto_assigned: true, input_type: 'text'},
+        {column_name: 'timestamp', input_type: "date"}
+    ],
+    status: 'ready',
+    error: null
 }
 
 const DataSlice = createSlice({
     name: "data",
     initialState,
     reducers: {
-        authRowAdd: (state, action: PayloadAction<DataTableAuthRow>) => {
+        authRowAdded: (state, action: PayloadAction<IDataTableAuthRow>) => {
             let payload = action.payload;
             payload.hashed = (payload.hashed) ? payload.hashed : hashRowPassword(payload.password);
             payload.timestamp = (payload.timestamp) ? payload.timestamp: Date.now().toString();
             state.rows.push(payload);
-        },
-        selectRow: (state, action: PayloadAction<Number>) => {
-            if (action.payload < state.rows.length){
-                state.selected_row_indxs.push(action.payload);
-            }
-        },
-        deselectRow: (state, action: PayloadAction<Number>) => {
-            state.selected_row_indxs = state.selected_row_indxs.filter(v => v !== action.payload);
         },
     },
     extraReducers: (builder) => {
@@ -70,8 +76,9 @@ const DataSlice = createSlice({
             .addCase(authRowAddAsync.pending, (state) => {
                 state.status = 'loading';
             })
-            .addCase(authRowAddAsync.fulfilled, (state) => {
+            .addCase(authRowAddAsync.fulfilled, (state, action) => {
                 state.status = 'ready';
+                state.rows.push(action.payload);
             })
             .addCase(authRowAddAsync.rejected, (state) => {
                 state.status = 'failed';
@@ -79,6 +86,9 @@ const DataSlice = createSlice({
     }
 });
 
-export const {authRowAdd, selectRow, deselectRow} = DataSlice.actions;
+export const {authRowAdded} = DataSlice.actions;
 export const authRows = (state: RootState) => state.datarows.rows;
+export const authColumns = (state: RootState) => state.datarows.columns;
+export const authMetacolumns = (state: RootState) => state.datarows.metacolumns;
+export const authDataStatus = (state: RootState) => state.datarows.status;
 export default DataSlice.reducer;

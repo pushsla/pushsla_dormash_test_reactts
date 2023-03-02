@@ -1,10 +1,15 @@
-import {DataTableAuthRow} from "@data/DataSlice/DataSlice";
+import {IDataTableAuthRow} from "@data/DataSlice/DataSlice";
+import {createAsyncThunk} from "@reduxjs/toolkit";
 
-export function promiseAuthRowAdd(row: DataTableAuthRow){
-    return new Promise<{data: DataTableAuthRow}>((resolve) => {
-        setTimeout(() => resolve({data: row}), 1000);
+export function asyncAuthRowAdd(row: IDataTableAuthRow){
+    return new Promise<{data: IDataTableAuthRow}>((resolve) => {
+        setTimeout(() => resolve({data: row}), 500);
     })
 }
+
+export const fetchAuthRows = createAsyncThunk('data/fetchAuthRows', async () => {
+   const response = fetch("/authWors");
+});
 
 export function hashRowPassword(str: string, seed: number = 0x811c9dc5): string{
     let h = seed;
