@@ -4,7 +4,7 @@
 
 //*module
 import React, {useState} from "react";
-import {Paper, Stack, Typography} from "@mui/material";
+import {LinearProgress, Paper, Stack} from "@mui/material";
 import {
     Grid,
     Table,
@@ -64,7 +64,7 @@ export const Bodygrid: React.FC<{}> = (props) => {
     return(
         <article className="Bodygrid">
             <Paper>
-                <Typography>{dataStatus}</Typography>
+                {dataStatus !== 'ready' && <LinearProgress/>}
                 <Stack direction={"column"} spacing={"2rem"}>
                     <Grid columns={columns} rows={rows}>
                         <DragDropProvider/>
@@ -86,6 +86,7 @@ export const Bodygrid: React.FC<{}> = (props) => {
                     </Grid>
                     <BodygridModifyform onFormSubmit={modifyformSubmitted}/>
                 </Stack>
+                {dataStatus !== 'ready' && <LinearProgress/>}
             </Paper>
         </article>
     );

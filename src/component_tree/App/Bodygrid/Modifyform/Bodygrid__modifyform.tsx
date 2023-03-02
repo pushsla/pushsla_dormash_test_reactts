@@ -48,6 +48,8 @@ export const BodygridModifyform: React.FC<IBodygridModifyformProps> = (props) =>
     const [isOpen, setOpen] = useState(false);
     //State of new row creation form
     const [row, setRow] = useState<IDataTableAuthRow>(structuredClone(initialRowState));
+    //Validation states for fields
+    const [invalids, setInvalids] = useState<Array<string>>([]);
 
     //How to handle open action of Dialog
     const handleOpen = () => {
@@ -59,9 +61,31 @@ export const BodygridModifyform: React.FC<IBodygridModifyformProps> = (props) =>
     }
     //How to handle apply action of Dialog
     const handleApply = () => {
-        handleClose();
-        if (props.onFormSubmit) props.onFormSubmit(structuredClone(row));
-        setRow(structuredClone(initialRowState));
+        let invalids_sync_cache = validateForm();
+
+        if (invalids_sync_cache.length == 0) {
+            handleClose();
+            if (props.onFormSubmit) props.onFormSubmit(structuredClone(row));
+            setRow(structuredClone(initialRowState));
+        }else{
+            console.log(invalids_sync_cache);
+        }
+    }
+    //Check current form state for invalid fields
+    const validateForm = () => {
+        setInvalids([]);
+        let invalids_sync_cache: Array<string> = [];
+
+        metacols.forEach((metacol, mcidx) => {
+            let assigned_value = row[metacol.column_name as keyof IDataTableAuthRow];
+            if (metacol.required && !assigned_value){
+                setInvalids((prevState) => {
+                   return [...prevState, metacol.column_name];
+                });
+                invalids_sync_cache.push(metacol.column_name);
+            }
+        });
+        return invalids_sync_cache;
     }
     //How to handle decline action of Dialog
     const handleDecline = () => {
@@ -103,11 +127,18 @@ export const BodygridModifyform: React.FC<IBodygridModifyformProps> = (props) =>
                                           id={`bodygrid__modifyform_password${idx}`}
                                           type='password'
                                           required={meta.required}
+                                          error={invalids.includes(meta.column_name)}
                                           label={col.title}
                                           value={row[meta.column_name as keyof IDataTableAuthRow]}
-                                          onChange={(e) => setRow((prevState) => (
-                                              {...prevState, [meta.column_name as keyof IDataTableAuthRow]: e.target.value}
-                                          ))}
+                                          onChange={(e) => {
+                                              setRow((prevState) => (
+                                                  {
+                                                      ...prevState,
+                                                      [meta.column_name as keyof IDataTableAuthRow]: e.target.value
+                                                  }
+                                              ));
+                                              validateForm();
+                                          }}
                                       />
                                     );
                                 case "select":
@@ -117,6 +148,7 @@ export const BodygridModifyform: React.FC<IBodygridModifyformProps> = (props) =>
                                             key={idx}
                                             id={`bodygrid__modifyform_select${idx}`}
                                             required={meta.required}
+                                            error={invalids.includes(meta.column_name)}
                                             label={col.title}
                                             value={row[meta.column_name as keyof IDataTableAuthRow]}
                                             onChange={(e) => setRow((prevState) => (
@@ -141,7 +173,7 @@ export const BodygridModifyform: React.FC<IBodygridModifyformProps> = (props) =>
                                             id={`bodygrid__modifyform_date${idx}`}
                                             type='date'
                                             required={meta.required}
-                                            label={col.title}
+                                            error={invalids.includes(meta.column_name)}
                                             value={row[meta.column_name as keyof IDataTableAuthRow]}
                                             onChange={(e) => setRow((prevState) => (
                                                 {...prevState, [meta.column_name as keyof IDataTableAuthRow]: e.target.value}
@@ -155,6 +187,7 @@ export const BodygridModifyform: React.FC<IBodygridModifyformProps> = (props) =>
                                             id={`bodygrid__modifyform_email${idx}`}
                                             type='email'
                                             required={meta.required}
+                                            error={invalids.includes(meta.column_name)}
                                             label={col.title}
                                             value={row[meta.column_name as keyof IDataTableAuthRow]}
                                             onChange={(e) => setRow((prevState) => (
@@ -169,6 +202,7 @@ export const BodygridModifyform: React.FC<IBodygridModifyformProps> = (props) =>
                                             id={`bodygrid__modifyform_text${idx}`}
                                             type='text'
                                             required={meta.required}
+                                            error={invalids.includes(meta.column_name)}
                                             label={col.title}
                                             value={row[meta.column_name as keyof IDataTableAuthRow]}
                                             onChange={(e) => setRow((prevState) => (

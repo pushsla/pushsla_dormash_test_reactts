@@ -14,6 +14,9 @@ export interface IAppLgoProps{
     alt: string
 }
 
-export const AppLogo:React.FC<IAppLgoProps> = (props) => (
-    <div></div>
-);
+export const AppLogo:React.FC<IAppLgoProps> = (props) => {
+
+    return (
+        <img className="App__logo" src={props.logo} alt={props.alt}/>
+    );
+}

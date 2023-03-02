@@ -20,6 +20,14 @@ export const fetchAuthRows = createAsyncThunk('data/fetchAuthRows', async () => 
    const response = fetch("/authWors");
 });
 
+export function preparePayload(payload: IDataTableAuthRow): IDataTableAuthRow{
+    return {
+        ...payload,
+        timestamp: (payload.timestamp) ? (new Date(payload.timestamp)).getTime().toString() : Date.now().toString(),
+        hashed: (payload.hashed) ? payload.hashed : hashRowPassword(payload.password)
+    };
+}
+
 /**
  * Service function used to generate password hash in client space
  * @param str   - string to hash

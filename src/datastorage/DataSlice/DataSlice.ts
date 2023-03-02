@@ -6,7 +6,8 @@
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 //*local
 import {RootState} from "@data/storage";
-import {hashRowPassword, asyncAuthRowAdd} from "@data/DataSlice/DataSlice.impl";
+import {hashRowPassword, asyncAuthRowAdd, preparePayload} from "@data/DataSlice/DataSlice.impl";
+import {dataSlice_mock} from "@/mocks/mock_data/DataSlice_mock";
 
 
 // An interface any object stored in DataSlice must implement
@@ -53,7 +54,7 @@ export const authRowAddAsync = createAsyncThunk(
 
 // Initial state of DataSlice
 const initialState: IDataSliceState = {
-    rows: [],
+    rows: dataSlice_mock,
     columns: [
         {name: 'email', title: 'E-mail'},
         {name: 'gender', title: 'I am...'},
@@ -78,10 +79,7 @@ const DataSlice = createSlice({
     initialState,
     reducers: {
         authRowAdded: (state, action: PayloadAction<IDataTableAuthRow>) => {
-            let payload = action.payload;
-            payload.hashed = (payload.hashed) ? payload.hashed : hashRowPassword(payload.password);
-            payload.timestamp = (payload.timestamp) ? payload.timestamp: Date.now().toString();
-            state.rows.push(payload);
+            state.rows.push(preparePayload(action.payload));
         },
     },
     extraReducers: (builder) => {
@@ -91,7 +89,7 @@ const DataSlice = createSlice({
             })
             .addCase(authRowAddAsync.fulfilled, (state, action) => {
                 state.status = 'ready';
-                state.rows.push(action.payload);
+                state.rows.push(preparePayload(action.payload));
             })
             .addCase(authRowAddAsync.rejected, (state) => {
                 state.status = 'failed';
