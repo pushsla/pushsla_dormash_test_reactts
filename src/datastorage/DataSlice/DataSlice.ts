@@ -1,8 +1,15 @@
+/**
+ * Storage Slice used to manage row-data for Bodygrid Table
+ */
+
+//*module
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
+//*local
 import {RootState} from "@data/storage";
 import {hashRowPassword, asyncAuthRowAdd} from "@data/DataSlice/DataSlice.impl";
 
 
+// An interface any object stored in DataSlice must implement
 export interface IDataTableAuthRow {
     email: string,
     password: string,
@@ -11,6 +18,7 @@ export interface IDataTableAuthRow {
     timestamp: string,
 }
 
+// An interface DataSlice's state promises to implement
 export interface IDataSliceState {
     rows: Array<IDataTableAuthRow>,
     columns: Array<IDataTableColumn>,
@@ -19,6 +27,7 @@ export interface IDataSliceState {
     error: string | null,
 }
 
+// An interface any metadata about stored objects' properties (columns for table) will implement
 export interface IDataTableMetacolumn{
     column_name: string,
     input_type: "text" | "email" | "password" | "select" | "date"
@@ -27,11 +36,13 @@ export interface IDataTableMetacolumn{
     auto_assigned?: boolean,
 }
 
+// An interface any info-data of stored object's properties (columns for table) will implement
 export interface IDataTableColumn{
     name: string,
     title: string
 }
 
+// Reducer for dispatch that will add new row asynchronically
 export const authRowAddAsync = createAsyncThunk(
     'DataSlice/authRowAdd',
     async (row: IDataTableAuthRow) => {
@@ -40,6 +51,7 @@ export const authRowAddAsync = createAsyncThunk(
     }
 )
 
+// Initial state of DataSlice
 const initialState: IDataSliceState = {
     rows: [],
     columns: [
@@ -60,6 +72,7 @@ const initialState: IDataSliceState = {
     error: null
 }
 
+//DataSlice
 const DataSlice = createSlice({
     name: "data",
     initialState,
@@ -86,9 +99,15 @@ const DataSlice = createSlice({
     }
 });
 
+// Add row to DataSlice directly without fakey async
 export const {authRowAdded} = DataSlice.actions;
+// DataSlice state of stored objects
 export const authRows = (state: RootState) => state.datarows.rows;
+// DataSlice state of objects' field definitions (columns for table)
 export const authColumns = (state: RootState) => state.datarows.columns;
+// DataSlice state of metadata about columns
 export const authMetacolumns = (state: RootState) => state.datarows.metacolumns;
+// DataSlice state of async row append process
 export const authDataStatus = (state: RootState) => state.datarows.status;
+// DataSlice main accessor
 export default DataSlice.reducer;

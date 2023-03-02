@@ -1,24 +1,30 @@
+/**
+ * Reactive component used to add new rows to the Bodygrid's Table => add new objects to DataSlice
+ */
+
+//*module
 import React, {useState} from "react";
 import {
-    Button,
-    Dialog,
+    Button, Dialog,
     DialogActions,
     DialogContent,
     DialogContentText,
-    DialogTitle, Divider, MenuItem,
-    Select, SelectChangeEvent, Stack,
+    DialogTitle, MenuItem,
+    Select, Stack,
     TextField
 } from "@mui/material";
+//*local
 import {useAppSelector} from "@data/hooks";
 import {localeSlice} from "@data/LocaleSlice/LocaleSlice";
 import {authColumns, authMetacolumns, IDataTableAuthRow, IDataTableMetacolumn} from "@data/DataSlice/DataSlice";
-import {DateBox} from "devextreme-react";
 
 
+//An interface any props object passed to BodygridModifyform must implement
 export interface IBodygridModifyformProps{
     onFormSubmit?: (row: IDataTableAuthRow) => void;
 }
 
+//Initial state of newly created row in BodygridModifyform
 const initialRowState: IDataTableAuthRow = {
     email: "",
     gender: "?",
@@ -26,29 +32,49 @@ const initialRowState: IDataTableAuthRow = {
     timestamp: "",
 }
 
+/**
+ * Modifyform is presented as openButton and Modal Dialog.
+ * Input fields for modal dialog are being automatically retrieved from authColumns&authMetacolumns from DataSlice
+ * @param props - IBodygridModifyformProps
+ */
 export const BodygridModifyform: React.FC<IBodygridModifyformProps> = (props) => {
+    //Localisation strings
     const locale = useAppSelector(localeSlice);
+    //Metadata about DataSlice object fields (interpreted as columns)
     const metacols = useAppSelector(authMetacolumns);
+    //DataSlice object field definitions for devexpress Table
     const cols = useAppSelector(authColumns);
-
+    //State of Model Dialog
     const [isOpen, setOpen] = useState(false);
+    //State of new row creation form
     const [row, setRow] = useState<IDataTableAuthRow>(structuredClone(initialRowState));
 
+    //How to handle open action of Dialog
     const handleOpen = () => {
         setOpen(true);
     }
+    //How to handle close action of Dialog
     const handleClose = () => {
         setOpen(false);
     }
+    //How to handle apply action of Dialog
     const handleApply = () => {
         handleClose();
         if (props.onFormSubmit) props.onFormSubmit(structuredClone(row));
         setRow(structuredClone(initialRowState));
     }
+    //How to handle decline action of Dialog
     const handleDecline = () => {
         handleClose();
         setRow(structuredClone(initialRowState));
     }
+
+    /**
+     * Service function to retrieve Metacolumn definition for specified column
+     * Search is performed by comparing col_name with <meta>.column_name (col_name should be 'column.name' from column)
+     * @param col_name - name of column (from cols appselector ('name' field))
+     * @return IDataTableMetacolumn definition for column with specified name or UNDEFINED if meta was not found
+     */
     function getMetaFor(col_name: string): IDataTableMetacolumn | undefined{
         let fetched = metacols.filter(meta => meta.column_name === col_name);
         if (fetched.length === 0) return undefined;

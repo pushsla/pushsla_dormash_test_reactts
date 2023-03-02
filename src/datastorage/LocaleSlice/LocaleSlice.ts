@@ -1,7 +1,15 @@
-import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {RootState} from "@data/storage";
-import {Table, PagingPanel, GroupingPanel} from "@devexpress/dx-react-grid";
+/**
+ * Storage Slice used to manage application localization
+ */
 
+//*module
+import {createSlice} from "@reduxjs/toolkit";
+import {Table, PagingPanel, GroupingPanel} from "@devexpress/dx-react-grid";
+//*local
+import {RootState} from "@data/storage";
+
+
+// An interface LocalSlice localization data promises to implement
 export interface LocaleSlicePieces{
     Bodygrid: {
         tableMessages: Table.LocalizationMessages,
@@ -21,10 +29,12 @@ export interface LocaleSlicePieces{
     }
 }
 
+// An interface LocaleSlice state will implement
 export interface LocaleSliceState {
     pieces: LocaleSlicePieces
 }
 
+// Initial state of LocaleSlice
 const initialState: LocaleSliceState = {
     pieces: {
         Bodygrid: {
@@ -54,12 +64,14 @@ const initialState: LocaleSliceState = {
     }
 }
 
-
+// LocaleSlice
 const LocaleSlice = createSlice({
     name: 'locale',
     initialState,
     reducers: {}
 })
 
+// LocaleSlice state for localization
 export const localeSlice = (state: RootState) => state.locale.pieces;
+// Main accessor to LocaleSlice
 export default LocaleSlice.reducer;

@@ -1,12 +1,19 @@
-import React from "react";
+/**
+ * Application logo
+ */
 
+//*module
+import React from "react";
+//*local
+//*styles
 import "./App__logo.sass"
 
-export interface PropertiesOfApp__logo{
+// An interface any props passed to AppLogo must implement
+export interface IAppLgoProps{
     logo: string,
     alt: string
 }
 
-export const AppLogo:React.FC<PropertiesOfApp__logo> = (props) => (
+export const AppLogo:React.FC<IAppLgoProps> = (props) => (
     <div></div>
 );
